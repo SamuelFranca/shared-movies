@@ -180,14 +180,14 @@ FOREACH (keyword IN apoc.convert.fromJsonList(row.keywords) |
 );
 //ok
 
-// ratings.csv
+// ratings_small.csv
 :auto USING PERIODIC COMMIT 1000
-LOAD CSV WITH HEADERS FROM 'file:///ratings.csv' AS row
+LOAD CSV WITH HEADERS FROM 'file:///ratings_small.csv' AS row
 MATCH (m:Movie { id: toInteger(row.movieId) })
 MERGE (u:User { id: toInteger(row.userId) })
 
 MERGE (u)-[r:RATED]->(m)
-ON CREATE SET r.rating = toFloat(row.rating), r.timestamp = datetime({epochSeconds: toInteger(row.timestamp)})
+ON CREATE SET r.rating = toFloat(row.rating), r.timestamp = datetime({epochSeconds: toInteger(row.timestamp)});
 //Neo.TransientError.Transaction.MaximumTransactionLimitReached
 //Unable to start new transaction since limit of concurrently executed transactions is reached. See setting dbms.transaction.concurrent.maximum
 
