@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import request from 'supertest';
 import { AppModule } from './../src/app.module';
 
 describe('AppController (e2e)', () => {
@@ -12,13 +12,61 @@ describe('AppController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe());
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  afterEach(() => app.close());
+
+  // it('/ (GET)', () => {
+  //   return request(app.getHttpServer())
+  //     .get('/')
+  //     .expect(200)
+  //     .expect('Hello World!');
+  // });
+
+  describe('Auth', () => {
+    describe('POST /auth/register', () => {
+      it('should validade the request', () => {
+        return request(app.getHttpServer())
+          .post('/auth/register')
+          .set('Accept', 'application/json')
+          .send({
+            email: 'hello@example.com',
+            dateOfBirth: '2019-01-01',
+          })
+          .expect(400)
+          .expect((res) => {
+            //console.log(res.body);
+
+            expect(res.body.message).toContain('password should not be empty');
+            expect(
+              res.body.message.find((m: string) =>
+                m.startsWith('maximal allowed date for dateOfBirth'),
+              ),
+            ).toBeDefined();
+          });
+      });
+
+      it('should return HTTP 200 successful on successful regustration', () => {
+        let email = '${Math.random()}@samuelfranca.pt'
+
+
+        return request(app.getHttpServer())
+          .post('/auth/register')
+          .set('Accept', 'application/json')
+          .send({
+            email,
+            password:'letmein',
+            dateOfBirth: '2019-01-01',
+            firstName: 'Samuel',
+            lastName: 'Franca'
+          })
+          .expect(201)
+          .expect(res => {
+              expect(res.body.email).toBe(email)
+          });
+      });
+    });
   });
 });

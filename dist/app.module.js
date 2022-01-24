@@ -30,6 +30,8 @@ AppModule = __decorate([
                     database: configService.get('NEO4J_DATABASE'),
                 })
             }),
+            AuthModule,
+            UserModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
