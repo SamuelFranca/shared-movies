@@ -10,6 +10,12 @@ npm install neo4j-driver-core
 npm install class-validator
 npm install class-transformer
 npm i moment
+
 -----------------
+npm install bcrypt 
+--
+npm i --save @nestjs/passport passport passport-local
+npm i --save-dev @types/passport-local
+--
 
 npm run start:dev

@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import request from 'supertest';
+import * as request from 'supertest';
+//import request from 'supertest';
 import { AppModule } from './../src/app.module';
 
 describe('AppController (e2e)', () => {
@@ -26,6 +27,9 @@ describe('AppController (e2e)', () => {
   // });
 
   describe('Auth', () => {
+    const email = `${Math.random()}@samuelfranca.pt`;
+    const password = Math.random().toString();
+
     describe('POST /auth/register', () => {
       it('should validade the request', () => {
         return request(app.getHttpServer())
@@ -48,25 +52,38 @@ describe('AppController (e2e)', () => {
           });
       });
 
-      it('should return HTTP 200 successful on successful regustration', () => {
-        let email = '${Math.random()}@samuelfranca.pt'
-
-
+      it('should return HTTP 200 successful on successful registration', () => {
         return request(app.getHttpServer())
           .post('/auth/register')
           .set('Accept', 'application/json')
           .send({
             email,
-            password:'letmein',
+            password,
             dateOfBirth: '2019-01-01',
             firstName: 'Samuel',
-            lastName: 'Franca'
+            lastName: 'Franca',
           })
           .expect(201)
           .expect(res => {
-              expect(res.body.email).toBe(email)
+            expect(res.body.email).toBe(email);
           });
       });
     });
+
+    describe('POST /auth/login', () => {
+      it('should return 401 if username does not exist', () => {
+        return request(app.getHttpServer())  
+        .post('/auth/login')
+        .send({email:'unknown', password: 'anything'})
+        .expect(401)
+      })
+      it('should return 401 if password is incorrect', () => {
+        return request(app.getHttpServer())  
+        .post('/auth/login')
+        .send({email, password: 'anything'})
+        .expect(401)
+      })
+
+    })
   });
 });
