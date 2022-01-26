@@ -3,6 +3,9 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 //import request from 'supertest';
 import { AppModule } from './../src/app.module';
+import { Neo4jTypeInterceptor } from '../src/neo4j/neo4j-type.interceptor';
+import { Neo4jErrorFilter } from '../../app005/project-name/src/neo4j/neo4j-error.filter';
+import { Neo4jService } from '../src/neo4j/neo4j.service';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -14,6 +17,8 @@ describe('AppController (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalInterceptors(new Neo4jTypeInterceptor());
+    app.useGlobalFilters(new Neo4jErrorFilter());
     await app.init();
   });
 
@@ -64,26 +69,51 @@ describe('AppController (e2e)', () => {
             lastName: 'Franca',
           })
           .expect(201)
-          .expect(res => {
-            expect(res.body.email).toBe(email);
+          .expect((res) => {
+            expect(res.body.email).toBeDefined();
+            console.log(res.body);
           });
       });
     });
 
     describe('POST /auth/login', () => {
       it('should return 401 if username does not exist', () => {
-        return request(app.getHttpServer())  
-        .post('/auth/login')
-        .send({email:'unknown', password: 'anything'})
-        .expect(401)
-      })
+        return request(app.getHttpServer())
+          .post('/auth/login')
+          .send({ email: 'unknown', password: 'anything' })
+          .expect(401);
+      });
       it('should return 401 if password is incorrect', () => {
-        return request(app.getHttpServer())  
-        .post('/auth/login')
-        .send({email, password: 'anything'})
-        .expect(401)
-      })
+        return request(app.getHttpServer())
+          .post('/auth/login')
+          .send({ email, password: 'anything' })
+          .expect(401);
+      });
 
-    })
+      it('should return 201 if username and password are correct', () => {
+        return request(app.getHttpServer())
+          .post('/auth/login')
+          .send({ email, password })
+          .expect(201)
+          .expect((res) => {
+            expect(res.body.access_token).toBeDefined();
+            let token = res.body.access_token;
+
+            console.log(res.body);
+          });
+      });
+    });
+
+    describe('Get /auth/user', () => {
+      it('should authenticate a user with the JWT token', () => {
+        return request(app.getHttpServer())
+          .get('/auth/user')
+          .set('Authorization', 'Bearer ${token}')
+          .expect(200)
+          .expect((res) => {
+            expect(res.body.email).toBe(email);
+          });
+      });
+    });
   });
 });
