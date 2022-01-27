@@ -5,8 +5,10 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;
+
   @IsNotEmpty()
   password: string;
+  
   @IsNotEmpty()
   @IsDate()
   @Type(() => Date)

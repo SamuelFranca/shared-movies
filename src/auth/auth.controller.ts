@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, UseGuards,UsePipes,ValidationPipe } from '@nestjs/common';
+import { SubscriptionService } from 'src/subscription/subscription.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
@@ -10,9 +11,10 @@ export class AuthController {
 
     constructor(
         private readonly userService: UserService,
-        private readonly authService: AuthService
+        private readonly authService: AuthService,
+        private readonly subscriptionService: SubscriptionService
         ) {}
-
+       
     @Post('register')
     async postRegister(@Body() createUserDto: CreateUserDto) {
         const user = await this.userService.create(
@@ -22,8 +24,10 @@ export class AuthController {
             createUserDto.firstName,
             createUserDto.lastName
         )
-
+        
+        //console.log(">> %s", JSON.stringify(user.properties))
         return await this.authService.createToken(user)
+        
     }
 
     @UseGuards(LocalAuthGuard)
@@ -36,6 +40,11 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     @Get('user')
     async getUser(@Request() request) {
-        return request.user.properties
+        const {id, email, dateOfBirth, firstName, lastName} = request.user.properties
+
+        return {
+            id, email, firstName, lastName,
+            dateOfBirth: (new Date(dateOfBirth)).toISOString()
+        }
     }
 }

@@ -34,6 +34,7 @@ describe('AppController (e2e)', () => {
   describe('Auth', () => {
     const email = `${Math.random()}@samuelfranca.pt`;
     const password = Math.random().toString();
+    let token
 
     describe('POST /auth/register', () => {
       it('should validade the request', () => {
@@ -69,8 +70,8 @@ describe('AppController (e2e)', () => {
             lastName: 'Franca',
           })
           .expect(201)
-          .expect((res) => {
-            expect(res.body.email).toBeDefined();
+          .expect(res => {
+            expect(res.body.access_token).toBeDefined();
             console.log(res.body);
           });
       });
@@ -95,9 +96,9 @@ describe('AppController (e2e)', () => {
           .post('/auth/login')
           .send({ email, password })
           .expect(201)
-          .expect((res) => {
+          .expect(res => {
             expect(res.body.access_token).toBeDefined();
-            let token = res.body.access_token;
+            token = res.body.access_token;
 
             console.log(res.body);
           });
@@ -105,13 +106,26 @@ describe('AppController (e2e)', () => {
     });
 
     describe('Get /auth/user', () => {
+      it('should return unauthorised if no token is provided', () => {
+        return request(app.getHttpServer())
+          .get('/auth/user')
+          .expect(401)
+      })
+
+      it('should return unauthorised on incorrect token', () => {
+        return request(app.getHttpServer())
+          .get('/auth/user')
+          .set('Authorization',`Bearer incorrect`)
+          .expect(401)
+      })
       it('should authenticate a user with the JWT token', () => {
         return request(app.getHttpServer())
           .get('/auth/user')
-          .set('Authorization', 'Bearer ${token}')
+          .set('Authorization', `Bearer ${token}`)
           .expect(200)
-          .expect((res) => {
-            expect(res.body.email).toBe(email);
+          .expect(res => {
+            expect(res.body.email).toBe(email)
+            expect(res.body.password).toBeUndefined()
           });
       });
     });

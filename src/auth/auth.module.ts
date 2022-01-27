@@ -7,11 +7,12 @@ import { LocalStrategy } from './local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt.strategy';
+import { Subscription } from '../subscription/subscription.service';
+import { SubscriptionModule } from '../subscription/subscription.module';
 
 @Module({
   imports: [
     JwtModule.registerAsync({
-
       imports: [ ConfigModule,],
       inject: [ConfigService ],
       useFactory: ( configService: ConfigService) => ({
@@ -19,12 +20,10 @@ import { JwtStrategy } from './jwt.strategy';
         signOptions: {
           expiresIn: configService.get<string>('JWT_EXPIRES_IN')
         }
-
       })
-        
-
     }),
-    UserModule, EncryptionModule],
+    UserModule, EncryptionModule, SubscriptionModule
+  ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
 })

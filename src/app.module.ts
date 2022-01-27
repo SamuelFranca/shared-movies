@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Neo4jConfig } from './neo4j/neo4j-config.interface';
  import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { SubscriptionModule } from './subscription/subscription.module';
 import { EncryptionModule } from './encryption/encryption.module';
 /*import { EncryptionModule } from './encryption/encryption.module';
 import { SubscriptionModule } from './subscription/subscription.module';
@@ -30,10 +31,8 @@ import { UserModule } from './user/user.module';
       })
     }),
     AuthModule,   
-    UserModule, EncryptionModule,
-/*    UserModule,
-    EncryptionModule,
-    SubscriptionModule,
+    UserModule, EncryptionModule, SubscriptionModule,
+/*  SubscriptionModule,
     GenreModule,
     CheckoutModule, */
   ],

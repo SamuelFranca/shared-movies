@@ -14,6 +14,7 @@ const neo4j_module_1 = require("./neo4j/neo4j.module");
 const config_1 = require("@nestjs/config");
 const auth_module_1 = require("./auth/auth.module");
 const user_module_1 = require("./user/user.module");
+const subscription_module_1 = require("./subscription/subscription.module");
 const encryption_module_1 = require("./encryption/encryption.module");
 let AppModule = class AppModule {
 };
@@ -34,7 +35,7 @@ AppModule = __decorate([
                 })
             }),
             auth_module_1.AuthModule,
-            user_module_1.UserModule, encryption_module_1.EncryptionModule,
+            user_module_1.UserModule, encryption_module_1.EncryptionModule, subscription_module_1.SubscriptionModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
