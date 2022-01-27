@@ -1,6 +1,10 @@
 <<<<<<< HEAD
 #node_modules
 =======
+# 
+.env
+packs_extra_installed.md
+
 # compiled output
 /dist
 /node_modules
