@@ -52,3 +52,5 @@ Create (p)-[:PROVIDES_ACCESS_TO]->(g)
 MATCH(p:Package {id:0})
 return size((p)-[:PROVIDES_ACCESS_TO]->())
 // 20 
+
+call db.schema.visualization

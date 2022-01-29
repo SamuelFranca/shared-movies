@@ -4,17 +4,14 @@ import { AppService } from './app.service';
 import { Neo4jModule } from './neo4j/neo4j.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Neo4jConfig } from './neo4j/neo4j-config.interface';
- import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
-import { SubscriptionModule } from './subscription/subscription.module';
-import { EncryptionModule } from './encryption/encryption.module';
-/*import { EncryptionModule } from './encryption/encryption.module';
-import { SubscriptionModule } from './subscription/subscription.module';
-import { GenreModule } from './genre/genre.module';
-import { CheckoutModule } from './checkout/checkout.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
- */
+import { GenreModule } from './genre/genre.module';
+import { SubscriptionModule } from './subscription/subscription.module';
+import { EncryptionModule } from './encryption/encryption.module';
+import { CheckoutModule } from './checkout/checkout.module';
+
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -31,10 +28,7 @@ import { UserModule } from './user/user.module';
       })
     }),
     AuthModule,   
-    UserModule, EncryptionModule, SubscriptionModule,
-/*  SubscriptionModule,
-    GenreModule,
-    CheckoutModule, */
+    UserModule, EncryptionModule, SubscriptionModule, GenreModule, CheckoutModule,
   ],
   controllers: [AppController],
   providers: [AppService],

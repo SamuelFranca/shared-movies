@@ -13,7 +13,6 @@ const config_1 = require("@nestjs/config");
 const neo4j_service_1 = require("./neo4j.service");
 const neo4j_constants_1 = require("./neo4j.constants");
 const neo4j_util_1 = require("./neo4j.util");
-const neo4j_transaction_interceptor_1 = require("./neo4j-transaction.interceptor");
 let Neo4jModule = Neo4jModule_1 = class Neo4jModule {
     static forRoot(config) {
         return {
@@ -33,7 +32,6 @@ let Neo4jModule = Neo4jModule_1 = class Neo4jModule {
             ],
             exports: [
                 neo4j_service_1.Neo4jService,
-                neo4j_transaction_interceptor_1.Neo4jTransactionInterceptor,
             ]
         };
     }

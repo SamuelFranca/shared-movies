@@ -16,7 +16,6 @@ exports.Neo4jService = void 0;
 const neo4j_driver_1 = require("neo4j-driver");
 const common_1 = require("@nestjs/common");
 const neo4j_constants_1 = require("./neo4j.constants");
-const transaction_1 = require("neo4j-driver-core/lib/transaction");
 let Neo4jService = class Neo4jService {
     constructor(config, driver) {
         this.config = config;
@@ -31,10 +30,6 @@ let Neo4jService = class Neo4jService {
     int(value) {
         return (0, neo4j_driver_1.int)(value);
     }
-    beginTransaction(database) {
-        const session = this.getWriteSession(database);
-        return session.beginTransaction();
-    }
     getReadSession(database) {
         return this.driver.session({
             database: database || this.config.database,
@@ -48,14 +43,14 @@ let Neo4jService = class Neo4jService {
         });
     }
     read(cypher, params, databaseOrTransaction) {
-        if (databaseOrTransaction instanceof transaction_1.default) {
+        if (databaseOrTransaction instanceof TransactionImpl) {
             return databaseOrTransaction.run(cypher, params);
         }
         const session = this.getReadSession(databaseOrTransaction);
         return session.run(cypher, params);
     }
     write(cypher, params, databaseOrTransaction) {
-        if (databaseOrTransaction instanceof transaction_1.default) {
+        if (databaseOrTransaction instanceof TransactionImpl) {
             return databaseOrTransaction.run(cypher, params);
         }
         const session = this.getWriteSession(databaseOrTransaction);

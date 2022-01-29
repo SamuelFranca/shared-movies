@@ -34,7 +34,7 @@ describe('AppController (e2e)', () => {
   describe('Auth', () => {
     const email = `${Math.random()}@samuelfranca.pt`;
     const password = Math.random().toString();
-    let token
+    let token, genreId
 
     describe('POST /auth/register', () => {
       it('should validade the request', () => {
@@ -105,7 +105,7 @@ describe('AppController (e2e)', () => {
       });
     });
 
-    describe('Get /auth/user', () => {
+    describe('GET /auth/user', () => {
       it('should return unauthorised if no token is provided', () => {
         return request(app.getHttpServer())
           .get('/auth/user')
@@ -128,6 +128,74 @@ describe('AppController (e2e)', () => {
             expect(res.body.password).toBeUndefined()
           });
       });
+
+
     });
+
+    describe('GET /genres', () => {
+      it('should return unauthorised if no token is provided', () => {
+        return request(app.getHttpServer())
+          .get('/genres')
+          .expect(401)
+      })
+
+      it('should return unauthorised on incorrect token', () => {
+        return request(app.getHttpServer())
+          .get('/genres')
+          .set('Authorization',`Bearer incorrect`)
+          .expect(401)
+      })
+      it('should authenticate a user with the JWT token', () => {
+        return request(app.getHttpServer())
+          .get('/genres')
+          .set('Authorization', `Bearer ${token}`)
+          .expect(200)
+          .expect(res => {
+              expect(res.body.length).toEqual(20)
+
+              res.body.forEach(row => {
+                expect( Object.keys(row)).toEqual(
+                  expect.arrayContaining(['id','name'])
+                )
+              })
+
+              //Assigning genre for the next test
+              genreId = res.body[0].id
+
+          });
+      });
+    });
+
+    describe('GET /genres/:id', () => {
+      it('should return unauthorised if no token is provided', () => {
+        return request(app.getHttpServer())
+          .get(`/genres/${genreId}`)
+          .expect(401)
+      })
+
+      it('should return unauthorised on incorrect token', () => {
+        return request(app.getHttpServer())
+          .get(`/genres/${genreId}`)
+          .set('Authorization',`Bearer incorrect`)
+          .expect(401)
+      })
+      it('should authenticate a user with the JWT token', () => {
+        return request(app.getHttpServer())
+          .get(`/genres/${genreId}`)
+          .set('Authorization', `Bearer ${token}`)
+          .expect(200)
+          .expect(res => {
+              expect(res.body.length).toEqual(20)
+
+              res.body.forEach(row => {
+                expect( Object.keys(row)).toEqual(
+                  expect.arrayContaining(['id','name'])
+                )
+              })
+
+          });
+      });
+    });
+
   });
 });
