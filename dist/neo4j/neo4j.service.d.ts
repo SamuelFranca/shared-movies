@@ -8,6 +8,7 @@ export declare class Neo4jService implements OnApplicationShutdown {
     getDriver(): Driver;
     getConfig(): Neo4jConfig;
     int(value: number): import("neo4j-driver-core/types/integer").default;
+    beginTransaction(database?: string): Transaction;
     getReadSession(database?: string): import("neo4j-driver-core/types/session").default;
     getWriteSession(database?: string): import("neo4j-driver-core/types/session").default;
     read(cypher: string, params?: Record<string, any>, databaseOrTransaction?: string | Transaction): Result;

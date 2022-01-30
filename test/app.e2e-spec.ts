@@ -4,8 +4,9 @@ import * as request from 'supertest';
 //import request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { Neo4jTypeInterceptor } from '../src/neo4j/neo4j-type.interceptor';
-import { Neo4jErrorFilter } from '../../app005/project-name/src/neo4j/neo4j-error.filter';
+import { Neo4jErrorFilter } from '../src/neo4j/neo4j-error.filter';
 import { Neo4jService } from '../src/neo4j/neo4j.service';
+
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -36,6 +37,13 @@ describe('AppController (e2e)', () => {
     const password = Math.random().toString();
     let token, genreId
 
+    afterAll(() => app.get(Neo4jService).write(`
+      MATCH (u:User {email: $email})
+      FOREACH (s IN [ (u)-[:PURCHASED]->(s) ] | DETACH DELETE s)
+      DETACH DELETE u
+    `,{ email })
+    )
+
     describe('POST /auth/register', () => {
       it('should validade the request', () => {
         return request(app.getHttpServer())
@@ -65,16 +73,33 @@ describe('AppController (e2e)', () => {
           .send({
             email,
             password,
-            dateOfBirth: '2019-01-01',
+            //dateOfBirth: '1972-02-10',
             firstName: 'Samuel',
             lastName: 'Franca',
           })
           .expect(201)
           .expect(res => {
-            expect(res.body.access_token).toBeDefined();
+            expect(res.body.access_token).toBeDefined()
             console.log(res.body);
-          });
-      });
+          })
+      })
+
+      it('should return HTTP 400 when email is already taken', () => {
+        return request(app.getHttpServer())
+          .post('/auth/register')
+          .set('Accept', 'application/json')
+          .send({
+            email,
+            password,
+            dateOfBirth: '1972-02-10',
+            firstName: 'Samuel',
+            lastName:'Franca',
+          })
+          .expect(400)
+          .expect(res => {
+              expect(res.body.message).toContain('email already taken')
+          })
+      })
     });
 
     describe('POST /auth/login', () => {
@@ -99,8 +124,7 @@ describe('AppController (e2e)', () => {
           .expect(res => {
             expect(res.body.access_token).toBeDefined();
             token = res.body.access_token;
-
-            console.log(res.body);
+            //console.log(res.body);
           });
       });
     });
@@ -179,23 +203,98 @@ describe('AppController (e2e)', () => {
           .set('Authorization',`Bearer incorrect`)
           .expect(401)
       })
-      it('should authenticate a user with the JWT token', () => {
+
+      it('should return not found when genre is not found', () => {
+        return request(app.getHttpServer())
+          .get(`/genres/999`)
+          .set('Authorization',`Bearer ${token}`)
+          .expect(404)
+      })
+
+      it('should return genre information and popular movies in exchange for a valid token', () => {
         return request(app.getHttpServer())
           .get(`/genres/${genreId}`)
           .set('Authorization', `Bearer ${token}`)
           .expect(200)
           .expect(res => {
-              expect(res.body.length).toEqual(20)
-
-              res.body.forEach(row => {
-                expect( Object.keys(row)).toEqual(
-                  expect.arrayContaining(['id','name'])
-                )
-              })
+              expect(res.body.id).toEqual(genreId)
+              expect(res.body.popular).toBeInstanceOf(Array)
+              expect(res.body.popular.length).toEqual(5)
+              expect(res.body.popular[0].popularity).toBeGreaterThanOrEqual(res.body.popular[0].popularity)
+            
+              //expect(res.body.length).toEqual(20)
+//
+              //res.body.forEach(row => {
+              //  expect( Object.keys(row)).toEqual(
+              //    expect.arrayContaining(['id','name'])
+              //  )
+              //})
 
           });
       });
+
     });
+
+    describe('GET /genres/:id/movies', () => {
+      it('should return unauthorised if no token is provided', () => {
+        return request(app.getHttpServer())
+          .get(`/genres/${genreId}/movies`)
+          .expect(401)
+      } )
+
+      it('should return unauthorized on incorrect token', () => {
+        return request(app.getHttpServer())
+          .get(`/genre/${genreId}/movies`)
+          .set('Authorization',`Bearer incorrect`)
+          .expect(401)
+      } )
+
+      it('should return not found when genre is not found', () => {
+        return request(app.getHttpServer())
+          .get(`/genres/999/movies`)
+          .set('Authorization', `Bearer ${token}`)
+          .expect(404)
+      })
+
+      it('should return a list of movies in exchange for valid token', () => {
+        return request(app.getHttpServer())
+        .get(`/genres/${genreId}/movies`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200)
+        .expect(res => {
+          expect(res.body).toBeInstanceOf(Array)
+          expect(res.body.length).toEqual(10)
+        })
+
+      })
+
+      it('should apply pagination', async () => {
+
+        const limit = 2
+        let firstId
+
+        await request(app.getHttpServer())
+          .get(`/genres/${genreId}/movies?limit=${limit}`)
+          .set('Authorization',`Bearer ${token}`)
+          .expect(200)
+          .expect(res => {
+            expect(res.body).toBeInstanceOf(Array)
+            expect(res.body.length).toEqual(limit)
+
+            firstId = res.body[0].id
+          })
+
+        return request(app.getHttpServer())
+          .get(`/genres/${genreId}/movies?limit=${limit}&page=2`)
+          .set('Authorization',`Bearer ${token}`)
+          .expect(200)
+          .expect(res => {
+            expect(res.body).toBeInstanceOf(Array) 
+            expect(res.body.length).toEqual(limit)
+            expect(res.body[0].id).not.toEqual(firstId)
+          })
+      })
+    })
 
   });
 });

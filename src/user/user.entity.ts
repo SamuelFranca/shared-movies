@@ -1,5 +1,6 @@
-import { Subscription } from '../subscription/subscription.service';
+
 import { Node } from 'neo4j-driver';
+import { Subscription } from 'src/subscription/subscription.entity';
 
 export class User {
 

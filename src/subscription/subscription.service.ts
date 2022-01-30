@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Node, Transaction } from 'neo4j-driver';
-import { Neo4jService } from 'src/neo4j/neo4j.service';
+import { Neo4jService } from '../neo4j/neo4j.service';
 import { User } from 'src/user/user.entity';
+//import { Subscription } from './subscription.entity';
 
 export type Subscription = Node
 

@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { SubscriptionService } from '../subscription/subscription.service';
 import { StripeCheckoutService } from './stripe/stripe-checkout.service';
 import { CHECKOUT_SERVICE } from './checkout.constants'
-import { SubscriptionModule } from 'src/subscription/subscription.module';
+import { SubscriptionModule } from '../subscription/subscription.module';
 
 @Module({
   

@@ -24,9 +24,17 @@ const toNative = (value, showLabelsOrType, showIdentity) => {
     else if (Array.isArray(value))
         return value.map(value => toNative(value));
     else if ((0, graph_types_1.isNode)(value))
-        return toNative(Object.assign({ _id: showIdentity ? toNative(value.identity) : null, _labels: showLabelsOrType ? toNative(value.labels) : null }, toNative(value.properties)));
+        return toNative({
+            _id: showIdentity ? toNative(value.identity) : null,
+            _labels: showLabelsOrType ? toNative(value.labels) : null,
+            ...toNative(value.properties),
+        });
     else if ((0, graph_types_1.isRelationship)(value))
-        return toNative(Object.assign({ _id: toNative(value.identity), _type: showLabelsOrType ? toNative(value.type) : null }, toNative(value.properties)));
+        return toNative({
+            _id: toNative(value.identity),
+            _type: showLabelsOrType ? toNative(value.type) : null,
+            ...toNative(value.properties),
+        });
     else if ((0, neo4j_driver_1.isInt)(value))
         return value.toNumber();
     else if ((0, neo4j_driver_1.isDuration)(value) ||

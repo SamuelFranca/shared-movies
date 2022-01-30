@@ -41,7 +41,10 @@ let Neo4jModule = Neo4jModule_1 = class Neo4jModule {
             global: true,
             imports: [config_1.ConfigModule],
             providers: [
-                Object.assign({ provide: neo4j_constants_1.NEO4J_CONFIG }, configProvider),
+                {
+                    provide: neo4j_constants_1.NEO4J_CONFIG,
+                    ...configProvider
+                },
                 {
                     provide: neo4j_constants_1.NEO4J_DRIVER,
                     inject: [neo4j_constants_1.NEO4J_CONFIG],

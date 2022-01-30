@@ -1,5 +1,5 @@
 import { Controller, Request,Get, UseGuards, Param, ParseIntPipe, Query, DefaultValuePipe } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { GenreService } from './genre.service';
 
 @Controller('genres')
