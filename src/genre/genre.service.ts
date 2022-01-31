@@ -1,8 +1,7 @@
 import { Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
-import { IsDate } from 'class-validator';
 import { Neo4jService } from '../neo4j/neo4j.service';
 import { int } from 'neo4j-driver';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
 import { STATUS_ACTIVE } from '../subscription/subscription.service';
 
 export interface Genre {

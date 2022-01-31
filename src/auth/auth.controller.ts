@@ -37,6 +37,7 @@ export class AuthController {
 
         const { access_token } = await this.authService.createToken(user)
 
+        
         return {
             ...user.toJson(),
             access_token

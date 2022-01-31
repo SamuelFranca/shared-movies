@@ -65,21 +65,38 @@ describe('AppController (e2e)', () => {
             ).toBeDefined();
           });
       });
-
+// getting 400 
       it('should return HTTP 200 successful on successful registration', () => {
+
+        console.log(":email:> %s", email  );
+        console.log(":password:> %s", password  );
+
+ //      {
+ //        "email": "test.register@samuelfranca.pt",
+ //        "password": "testpass",
+ //        "dateOfBirth": "2000-01-01",
+ //        "firstName": "Samuel",
+ //        "lastName": "Franca"
+ //        }
+
+
         return request(app.getHttpServer())
           .post('/auth/register')
           .set('Accept', 'application/json')
           .send({
-            email,
-            password,
-            //dateOfBirth: '1972-02-10',
+            email: 'test.register@samuelfranca.pt',
+            password: 'testpass',
+            dateOfBirth: '2000-01-01',
             firstName: 'Samuel',
             lastName: 'Franca',
           })
+          //201
           .expect(201)
           .expect(res => {
+            console.log("antes:")
+            console.log(res.body);
             expect(res.body.access_token).toBeDefined()
+            console.log("depois:")
             console.log(res.body);
           })
       })
@@ -97,6 +114,7 @@ describe('AppController (e2e)', () => {
           })
           .expect(400)
           .expect(res => {
+            console.log(res.body);
               expect(res.body.message).toContain('email already taken')
           })
       })
