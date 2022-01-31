@@ -11,7 +11,7 @@ export class PlanService {
     getPlans(): Promise<Plan[]> {
         return this.neo4jService.read(`
             MATCH (p:Plan)
-            WHERE p.price > 0
+            WHERE p.price >= 0
             RETURN p, [(p)-[:PROVIDES_ACCESS_TO]->(g) | g] as genres
             ORDER BY p.price ASC
         `)

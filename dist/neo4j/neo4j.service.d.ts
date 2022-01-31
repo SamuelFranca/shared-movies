@@ -2,8 +2,8 @@ import { Result, Driver, Transaction } from 'neo4j-driver';
 import { OnApplicationShutdown } from '@nestjs/common';
 import { Neo4jConfig } from './neo4j-config.interface';
 export declare class Neo4jService implements OnApplicationShutdown {
-    private readonly config;
     private readonly driver;
+    private readonly config;
     constructor(config: Neo4jConfig, driver: Driver);
     getDriver(): Driver;
     getConfig(): Neo4jConfig;

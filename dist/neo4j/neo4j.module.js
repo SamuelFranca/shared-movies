@@ -20,12 +20,12 @@ let Neo4jModule = Neo4jModule_1 = class Neo4jModule {
             global: true,
             providers: [
                 {
-                    provide: neo4j_constants_1.NEO4J_CONFIG,
+                    provide: neo4j_constants_1.NEO4J_OPTIONS,
                     useValue: config,
                 },
                 {
                     provide: neo4j_constants_1.NEO4J_DRIVER,
-                    inject: [neo4j_constants_1.NEO4J_CONFIG],
+                    inject: [neo4j_constants_1.NEO4J_OPTIONS],
                     useFactory: async (config) => (0, neo4j_util_1.createDriver)(config),
                 },
                 neo4j_service_1.Neo4jService,
@@ -42,12 +42,12 @@ let Neo4jModule = Neo4jModule_1 = class Neo4jModule {
             imports: [config_1.ConfigModule],
             providers: [
                 {
-                    provide: neo4j_constants_1.NEO4J_CONFIG,
+                    provide: neo4j_constants_1.NEO4J_OPTIONS,
                     ...configProvider
                 },
                 {
                     provide: neo4j_constants_1.NEO4J_DRIVER,
-                    inject: [neo4j_constants_1.NEO4J_CONFIG],
+                    inject: [neo4j_constants_1.NEO4J_OPTIONS],
                     useFactory: async (config) => (0, neo4j_util_1.createDriver)(config),
                 },
                 neo4j_service_1.Neo4jService,

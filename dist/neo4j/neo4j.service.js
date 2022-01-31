@@ -19,8 +19,8 @@ const neo4j_constants_1 = require("./neo4j.constants");
 const transaction_1 = require("neo4j-driver-core/lib/transaction");
 let Neo4jService = class Neo4jService {
     constructor(config, driver) {
-        this.config = config;
         this.driver = driver;
+        this.config = config;
     }
     getDriver() {
         return this.driver;
@@ -59,7 +59,8 @@ let Neo4jService = class Neo4jService {
             return databaseOrTransaction.run(cypher, params);
         }
         const session = this.getWriteSession(databaseOrTransaction);
-        return session.run(cypher, params);
+        console.log(session);
+        return null;
     }
     onApplicationShutdown() {
         return this.driver.close();
@@ -67,7 +68,7 @@ let Neo4jService = class Neo4jService {
 };
 Neo4jService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(neo4j_constants_1.NEO4J_CONFIG)),
+    __param(0, (0, common_1.Inject)(neo4j_constants_1.NEO4J_OPTIONS)),
     __param(1, (0, common_1.Inject)(neo4j_constants_1.NEO4J_DRIVER)),
     __metadata("design:paramtypes", [Object, Object])
 ], Neo4jService);

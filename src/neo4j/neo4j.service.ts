@@ -1,16 +1,24 @@
 import neo4j, { Result, Driver, int, Transaction } from 'neo4j-driver'
 import { Injectable, Inject, OnApplicationShutdown } from '@nestjs/common';
 import { Neo4jConfig } from './neo4j-config.interface';
-import { NEO4J_CONFIG, NEO4J_DRIVER } from './neo4j.constants';
+import { NEO4J_OPTIONS, NEO4J_DRIVER } from './neo4j.constants';
 import TransactionImpl from 'neo4j-driver-core/lib/transaction'
 
 @Injectable()
 export class Neo4jService implements OnApplicationShutdown {
 
+
+    private readonly driver: Driver;
+    private readonly config: Neo4jConfig;
+
     constructor(
-        @Inject(NEO4J_CONFIG) private readonly config: Neo4jConfig,
-        @Inject(NEO4J_DRIVER) private readonly driver: Driver
-    ) {}
+        @Inject(NEO4J_OPTIONS) config: Neo4jConfig,
+        @Inject(NEO4J_DRIVER) driver: Driver
+    ) {
+        this.driver = driver
+        this.config = config
+    }
+
 
     getDriver(): Driver {
         return this.driver;
@@ -53,13 +61,14 @@ export class Neo4jService implements OnApplicationShutdown {
         return session.run(cypher, params)
     }
 
-    write(cypher: string, params?: Record<string, any>,  databaseOrTransaction?: string | Transaction): Result {
+    write(cypher: string, params?: Record<string, any>, databaseOrTransaction?: string | Transaction): Result {
         if ( databaseOrTransaction instanceof TransactionImpl ) {
             return (<Transaction> databaseOrTransaction).run(cypher, params)
         }
 
         const session = this.getWriteSession(<string> databaseOrTransaction)
-        return session.run(cypher, params)
+        console.log(session)
+        return null //session.run(cypher, params)
     }
 
     onApplicationShutdown() {
