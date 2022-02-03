@@ -6,7 +6,7 @@
       <div>
         <img
           class="mx-auto h-12 w-auto"
-          src="../assets/neoflix-logo.png"
+          src="../assets/SharedMovies-logo.png"
           alt="Workflow"
         />
         <h2

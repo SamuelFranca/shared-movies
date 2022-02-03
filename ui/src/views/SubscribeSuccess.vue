@@ -1,6 +1,6 @@
 <template>
   <div class="subscribe">
-    <h1 class="text-xl font-bold text-center">Subscribe to Neoflix...</h1>
+    <h1 class="text-xl font-bold text-center">Subscribe to SharedMovies...</h1>
 
     <loading v-if="loading" />
 

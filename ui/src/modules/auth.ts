@@ -2,7 +2,7 @@
 import { computed, inject, reactive, toRefs, watch } from 'vue'
 import { useApi, useApiWithAuth } from './api'
 
-const AUTH_KEY = 'neoflix_token'
+const AUTH_KEY = 'sharedmovies_token'
 export const AUTH_TOKEN = 'access_token'
 
 interface Plan {
