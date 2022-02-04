@@ -10,7 +10,7 @@ import { Neo4jProvider,
   createDriver
 } from 'use-neo4j'
 
-const driver = createDriver('neo4j', 'localhost', 7687, 'neo4j', 'neo')
+const driver = createDriver('neo4j', 'localhost', 11005, 'neo4j', 'workonneoflix')
 
 ReactDOM.render(
   <React.StrictMode>

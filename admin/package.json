@@ -1,6 +1,7 @@
 {
-  "name": "admin",
+  "name": "admin-graph-app",
   "version": "0.1.0",
+  "homepage": "./",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.2",
@@ -26,6 +27,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "builder": "rm -f *.tgz && rm -rf dist && react-scripts build && mv build dist && npm pack",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

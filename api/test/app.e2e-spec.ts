@@ -200,7 +200,7 @@ describe('AppController (e2e)', () => {
               }
               else {
             
-                genreId = 16  
+                genreId = 9648  
               }              
               // 16
           });
@@ -266,7 +266,11 @@ describe('AppController (e2e)', () => {
         return request(app.getHttpServer())
           .get(`/genre/${genreId}/movies`)
           .set('Authorization',`Bearer incorrect`)
-          .expect(401)
+          //.expect(401)
+          .expect(res => { 
+            console.log(" <<<< GET /genres/:id/movies >>>>>")
+            console.log(res)            
+          })
       } )
 
 

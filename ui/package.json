@@ -15,6 +15,7 @@
     "autoprefixer": "^9.8.6",
     "axios": "^0.20.0",
     "core-js": "^3.6.5",
+    "glob-parent": "^5.1.2",
     "neo4j-driver": "^4.4.2",
     "postcss": "^8.0.9",
     "postcss-cli": "^9.1.0",
