@@ -1,6 +1,6 @@
 <template>
   <div class="subscribe">
-    <h1 class="text-xl font-bold text-center">Subscribe to SharedMovies...</h1>
+    <h1 class="text-xl font-bold text-center">Subscribe to Neoflix...</h1>
 
     <loading v-if="loading" />
 
@@ -39,13 +39,11 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { /*useApi,*/ useApiWithAuth } from "../modules/api";
-//import { useAuth } from "../modules/auth";
-import { Record } from "neo4j-driver"
-
+import { useApi, useApiWithAuth } from "../modules/api";
+import { useAuth } from "../modules/auth";
 export default defineComponent({
   setup() {
-    /*const { user } = useAuth();*/
+    const { user } = useAuth();
     // Get Plans
     const { get, loading, data } = useApiWithAuth("/plans");
     get();
@@ -55,12 +53,11 @@ export default defineComponent({
       plan.value = input
       // @ts-ignore
       const stripe = window.Stripe(process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY)
-      const { post /*, loading, data*/ } = useApiWithAuth("/checkout");
+      const { post, loading, data } = useApiWithAuth("/checkout");
       post({ planId: input.id })
         .then(res => stripe.redirectToCheckout({ sessionId: res.id }))
     }
     // Checkout
-    
     return {
       loading, data,
       plan, setPlan
@@ -72,17 +69,13 @@ export default defineComponent({
     // },
     genreList(genres: Record<string, any>[]) {
       const last = genres.pop();
-      if (!genres.length && last != undefined) {
-        return last.name;
+      if (!genres.length) {
+        return last!.name;
       }
-
-      var str_aux = ""; // (last.name == undefined) ? "" : " and " + last.name;
-      return genres.map((row) => row.name).join(", ") + str_aux;
+      return genres.map((row) => row.name).join(", ") + " and " + last!.name;
     },
     formatDuration(duration: string) {
-      //return duration.match(/[0-9]+D/)![0].replace(/[^0-9]/, "");
-      
-      return duration.match(/[0-9]+D/) == null ? duration : duration.replace(/[^0-9]/, "");
+      return duration.match(/[0-9]+D/)![0].replace(/[^0-9]/, "");
     },
   },
 });

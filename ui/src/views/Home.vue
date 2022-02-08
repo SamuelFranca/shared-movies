@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <loading v-if="loading" />
-
+                
     <template v-else>
       <div v-if="subscription?.plan.id === 0" class="bg-red-800 p-4 text-xs font-bold rounded-md flex flex-row">
         <div class="flex-grow flex flex-col justify-center">
